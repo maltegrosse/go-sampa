@@ -629,19 +629,19 @@ func (s *sampa) moonLatitudeArgument(jce float64) float64 {
 		1.0/863310000, -1.0/3526000, -0.0036539, 483202.0175233, 93.2720950, jce))
 }
 
-func (s *sampa) moonPeriodicTermSummation(d float64, m float64, m_prime float64, f float64, jce float64, terms [][]float64, sin_sum *float64, cos_sum *float64) {
+func (s *sampa) moonPeriodicTermSummation(d float64, m float64, mPrime float64, f float64, jce float64, terms [][]float64, sinSum *float64, cosSum *float64) {
 	var eMult, trigArg float64
 	e := 1.0 - jce*(0.002516+jce*0.0000074)
-	*sin_sum = 0
-	*cos_sum = 0
+	*sinSum = 0
+	*cosSum = 0
 
 	for i := 0; i < int(COUNT); i++ {
 
 		eMult = math.Pow(e, math.Abs(terms[i][TermM]))
-		trigArg = s.deg2rad(terms[i][TermD]*d + terms[i][TermM]*m + terms[i][TermF]*f + terms[i][TermMpr]*m_prime)
+		trigArg = s.deg2rad(terms[i][TermD]*d + terms[i][TermM]*m + terms[i][TermF]*f + terms[i][TermMpr]*mPrime)
 
-		*sin_sum += eMult * terms[i][TermLb] * math.Sin(trigArg)
-		*cos_sum += eMult * terms[i][TermR] * math.Cos(trigArg)
+		*sinSum += eMult * terms[i][TermLb] * math.Sin(trigArg)
+		*cosSum += eMult * terms[i][TermR] * math.Cos(trigArg)
 
 	}
 }
@@ -665,25 +665,25 @@ func (s *sampa) moonEquatorialHorizParallax(delta float64) float64 {
 	return s.rad2deg(math.Asin(6378.14 / delta))
 }
 
-func (s *sampa) apparentMoonLongitude(lamda_prime float64, del_psi float64) float64 {
-	return lamda_prime + del_psi
+func (s *sampa) apparentMoonLongitude(lamdaPrime float64, delPsi float64) float64 {
+	return lamdaPrime + delPsi
 }
 
-func (s *sampa) angularDistanceSunMoon(zen_sun float64, azm_sun float64, zen_moon float64, azm_moon float64) float64 {
-	zs := s.deg2rad(zen_sun)
-	zm := s.deg2rad(zen_moon)
-	return s.rad2deg(math.Acos(math.Cos(zs)*math.Cos(zm) + math.Sin(zs)*math.Sin(zm)*math.Cos(s.deg2rad(azm_sun-azm_moon))))
+func (s *sampa) angularDistanceSunMoon(zenSun float64, azmSun float64, zenMoon float64, azmMoon float64) float64 {
+	zs := s.deg2rad(zenSun)
+	zm := s.deg2rad(zenMoon)
+	return s.rad2deg(math.Acos(math.Cos(zs)*math.Cos(zm) + math.Sin(zs)*math.Sin(zm)*math.Cos(s.deg2rad(azmSun-azmMoon))))
 }
 
 func (s *sampa) sunDiskRadius(r float64) float64 {
 	return 959.63 / (3600.0 * r)
 }
 
-func (s *sampa) moonDiskRadius(e float64, pi float64, cap_delta float64) float64 {
-	return 358473400 * (1 + math.Sin(s.deg2rad(e))*math.Sin(s.deg2rad(pi))) / (3600.0 * cap_delta)
+func (s *sampa) moonDiskRadius(e float64, pi float64, capDelta float64) float64 {
+	return 358473400 * (1 + math.Sin(s.deg2rad(e))*math.Sin(s.deg2rad(pi))) / (3600.0 * capDelta)
 }
 
-func (s *sampa) sulArea(ems float64, rs float64, rm float64, a_sul *float64, a_sul_pct *float64) {
+func (s *sampa) sulArea(ems float64, rs float64, rm float64, aSul *float64, aSulPct *float64) {
 
 	ems2 := ems * ems
 	rs2 := rs * rs
@@ -704,12 +704,12 @@ func (s *sampa) sulArea(ems float64, rs float64, rm float64, a_sul *float64, a_s
 		ai = 0
 	}
 
-	*a_sul = math.Pi*rs2 - ai
+	*aSul = math.Pi*rs2 - ai
 
-	if *a_sul < 0 {
-		*a_sul = 0
+	if *aSul < 0 {
+		*aSul = 0
 	}
-	*a_sul_pct = *a_sul * 100.0 / (math.Pi * rs2)
+	*aSulPct = *aSul * 100.0 / (math.Pi * rs2)
 
 }
 func (s *sampa) geocentricRightAscension(lamda float64, epsilon float64, beta float64) float64 {
@@ -846,9 +846,9 @@ func (s *sampa) estimateIrr() error {
 	taua := s.birdData.GetTaua()
 	ba := s.birdData.GetBa()
 	albedo := s.birdData.GetAlbedo()
-	dni_mod := s.aSulPct / 100.0
+	dniMod := s.aSulPct / 100.0
 
-	b, err := bird.NewBird(zenith, r, pressure, ozone, water, taua, ba, albedo, dni_mod)
+	b, err := bird.NewBird(zenith, r, pressure, ozone, water, taua, ba, albedo, dniMod)
 	if err != nil {
 		return err
 	}

@@ -67,7 +67,7 @@ import (
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Revised 20-SEPT-2012 Andreas
-//         Modified a_sul and a_sul_pct such that values are reported when no eclipse is occuring
+//         Modified a_sul and a_sul_pct such that values are reported when no eclipse is occurring
 //         Set a_sul to zero when result was negative due to moon radius being larger than sun radius
 //         Added call to SERI/NREL BIRD Clear Sky Model to estimate values for irradiances
 //         Modified sampa_data structure to include values for estimated irradiance from BIRD model
